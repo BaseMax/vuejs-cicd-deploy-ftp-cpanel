@@ -27,19 +27,23 @@ jobs:
       - name: 📥 Install lftp
         run: sudo apt-get install -y lftp
 
+
       - name: 🔌 Test FTP connection (debug)
         run: |
           lftp -d -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
             set ftp:ssl-allow no;
             set ssl:verify-certificate no;
+            set ftp:prefer-ipv4 true;
             ls;
             bye
           "
+
       - name: 📤 Upload via FTP with custom port
         run: |
           lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
             set ftp:ssl-allow no;
             set ssl:verify-certificate no;
+            set ftp:prefer-ipv4 true;
             mirror -R -e -n dist ${{ secrets.FTP_PATH }};
             bye
           "
