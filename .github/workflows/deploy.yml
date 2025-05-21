@@ -27,9 +27,10 @@ jobs:
       - name: 📥 Install lftp
         run: sudo apt-get install -y lftp
 
-      - name: 🔌 Test FTP connection
+      - name: 🔌 Test FTP connection (debug)
         run: |
-          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
+          echo "Connecting to: ${{ secrets.FTP_HOST }} on port ${{ secrets.FTP_PORT }} - under username ${{ secrets.FTP_USERNAME }}"
+          lftp -d -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
             set ftp:ssl-allow no;
             set ssl:verify-certificate no;
             ls;
