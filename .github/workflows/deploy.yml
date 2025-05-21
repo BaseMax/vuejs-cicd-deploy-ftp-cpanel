@@ -1,0 +1,37 @@
+name: 🚀 Deploy project via FTP to cPanel
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  ftp-deploy:
+    name: 📡 Deploying via FTP to cPanel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔀 Checkout code from repository
+        uses: actions/checkout@v4
+
+      - name: 🛠 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🧱 Build project
+        run: npm run build
+
+      - name: 📥 Install lftp
+        run: sudo apt-get install -y lftp
+
+      - name: 📤 Upload via FTP with custom port
+        run: |
+          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
+            set ftp:ssl-allow no;
+            set ssl:verify-certificate no;
+            mirror -R -e -n dist ${{ secrets.FTP_PATH }};
+            bye
+          "
