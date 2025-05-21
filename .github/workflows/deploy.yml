@@ -37,13 +37,16 @@ jobs:
       #       bye
       #     "
 
-      - name: 📤 Upload dist contents via FTP
+      - name: 📤 Upload dist contents (files + folders) via FTP
         run: |
-          LFTP_FTP_IPV6=0 lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
+          LFTP_FTP_IPV6=0 lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} <<EOF
             set dns:order inet;
             set ftp:ssl-allow no;
             set ssl:verify-certificate no;
             lcd dist;
-            mput -E -a -O ${{ secrets.FTP_PATH }} *;
+            glob -a mput -O ${{ secrets.FTP_PATH }} *
+            $(for d in dist/*/; do
+              echo "mirror -R -e -n \"${d}\" \"${{ secrets.FTP_PATH }}/$(basename "$d")\";"
+            done)
             bye
-          "
+          EOF
