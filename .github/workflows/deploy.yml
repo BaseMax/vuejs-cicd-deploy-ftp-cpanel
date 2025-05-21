@@ -30,6 +30,7 @@ jobs:
       - name: 🔌 Test FTP connection (debug)
         run: |
           LFTP_FTP_IPV6=0 lftp -d -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
+            set dns:order inet;
             set ftp:ssl-allow no;
             set ssl:verify-certificate no;
             ls;
@@ -39,6 +40,7 @@ jobs:
       - name: 📤 Upload via FTP with custom port
         run: |
           LFTP_FTP_IPV6=0 lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
+            set dns:order inet;
             set ftp:ssl-allow no;
             set ssl:verify-certificate no;
             mirror -R -e -n dist ${{ secrets.FTP_PATH }};
