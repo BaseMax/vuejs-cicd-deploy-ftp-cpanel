@@ -27,30 +27,12 @@ jobs:
       - name: 📥 Install lftp
         run: sudo apt-get install -y lftp
 
-      # - name: 📤 Upload via FTP with custom port
-      #   run: |
-      #     lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
-      #       set dns:order inet;
-      #       set ftp:ssl-allow no;
-      #       set ssl:verify-certificate no;
-      #       mirror -R -e -n dist ${{ secrets.FTP_PATH }};
-      #       bye
-      #     "
-
-      - name: 📤 Upload dist contents (files + folders) via FTP
+      - name: 📤 Upload via FTP with custom port
         run: |
-          cd dist
-          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} <<EOF
+          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p ${{ secrets.FTP_PORT }} ${{ secrets.FTP_HOST }} -e "
             set dns:order inet;
             set ftp:ssl-allow no;
             set ssl:verify-certificate no;
-
-            lcd .
-            glob -a mput -O ${{ secrets.FTP_PATH }} *
-
-            $(for d in */; do
-              echo "mirror -R -e -n \"$d\" \"${{ secrets.FTP_PATH }}/$d\";"
-            done)
-
+            mirror -R -e -n dist ${{ secrets.FTP_PATH }};
             bye
-          EOF
+          "
