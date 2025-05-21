@@ -66,7 +66,7 @@ Automatic deployment is also set up via .github/workflows/deploy.yml. On every p
 
 You need to add some GitHub Actions env variables.
 
-- `FTP_IP`
+- `FTP_HOST`
 - `FTP_PORT`
 - `FTP_USERNAME`
 - `FTP_PASSWORD`
